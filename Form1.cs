@@ -5,26 +5,62 @@ namespace pr_1
 {
     public partial class Form1 : Form
     {
+        private Point click;
+        private Graphics g;
+        private bool drawEllipse = true;
+        private bool drawRectangle = true;
+
         public Form1()
         {
             InitializeComponent();
-            this.KeyPreview = true;
+            KeyPreview = true;
+            KeyDown += Form1_KeyDown;
         }
-        Point click;
-        Graphics g;
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            using (Graphics g = CreateGraphics())
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.A:
+                        if (drawRectangle)
+                            g.FillRectangle(Brushes.Yellow, 500, 300, 300, 150);
+                        break;
+                    case Keys.B:
+                        if (drawEllipse)
+                            g.FillEllipse(Brushes.Blue, 600, 100, 150, 150);
+                        break;
+                    case Keys.Delete:
+                        if (drawEllipse)
+                            g.FillEllipse(Brushes.White, 600, 100, 150, 150);
+                        if (drawRectangle)
+                            g.FillRectangle(Brushes.White, 500, 300, 300, 150);
+                        break;
+                }
+            }
+        }
+
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             g = CreateGraphics();
             g.Clear(Color.White);
-            g.FillEllipse(Brushes.Green, 100, 100, 100, 100);
-            g.DrawRectangle(new Pen(Color.Black) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash }, 270, 100, 100, 100);
-            g.DrawLine(Pens.Black, 450, 150, 550, 150);
+            if (drawEllipse)
+                g.FillEllipse(Brushes.Green, 100, 100, 100, 100);
+            if (drawRectangle)
+            {
+                g.DrawRectangle(new Pen(Color.Black) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash }, 270, 100, 100, 100);
+                g.DrawLine(Pens.Black, 450, 150, 550, 150);
+            }
         }
+
         private void Form1_MouseClick(object sender, MouseEventArgs e)
         {
             click = e.Location;
-            g.DrawRectangle(Pens.Violet, click.X, click.Y, 180, 100);
+            if (drawRectangle)
+                g.DrawRectangle(Pens.Violet, click.X, click.Y, 180, 100);
         }
+
         private void button1_Paint(object sender, PaintEventArgs e)
         {
             g = CreateGraphics();
@@ -39,21 +75,6 @@ namespace pr_1
             };
             Pen pen = new Pen(Color.Orange, 10);
             g.DrawPolygon(pen, points);
-        }
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.A:
-                    g.DrawEllipse(Pens.GreenYellow, 400, 400, 100, 100);
-                    break;
-                case Keys.B:
-                    g.DrawRectangle(Pens.Aqua, 500, 500, 150, 150);
-                    break;
-                case Keys.Delete:
-                    g.Clear(Color.White);
-                    break;
-            }
         }
     }
 }
